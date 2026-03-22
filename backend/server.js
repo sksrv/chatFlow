@@ -11,38 +11,45 @@ import initSocket from "./socket/socketHandler.js";
 
 dotenv.config();
 
-// Connect to MongoDB
 connectDB();
 
 const app = express();
 const httpServer = http.createServer(app);
 
-// Socket.io setup with CORS
+// ✅ Hardcode your Vercel URL directly — no env variable risk
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://chat-flow-beta.vercel.app",
+];
+
+// ✅ Socket.io CORS — uses same allowedOrigins array
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-// allowed origins for CORS
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.CLIENT_URL
-];
-// Middleware
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-}));
+// ✅ Express CORS
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (mobile apps, curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked: ${origin}`));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
+// ✅ Handle preflight for all routes
+app.options("*", cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -52,21 +59,18 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 
-// Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "ChatFlow API is running" });
 });
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Initialize Socket.io
 initSocket(io);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
 });
