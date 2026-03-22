@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #0d0f15;
+    color: #e2e8f0;
+    font-family: "DM Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2a2f3b;
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a404f;
+  }
+}
+
+@layer components {
+  .msg-bubble-sent {
+    @apply bg-brand-600 text-white rounded-2xl rounded-tr-sm px-4 py-2 max-w-xs lg:max-w-md break-words shadow-md;
+  }
+
+  .msg-bubble-received {
+    @apply bg-dark-100 text-slate-200 rounded-2xl rounded-tl-sm px-4 py-2 max-w-xs lg:max-w-md break-words shadow-md;
+  }
+
+  .sidebar-user-item {
+    @apply flex items-center gap-3 px-4 py-3 cursor-pointer transition-all duration-150 hover:bg-dark-200 rounded-xl mx-2;
+  }
+
+  .sidebar-user-item.active {
+    @apply bg-dark-200 border border-dark-100;
+  }
+
+  .input-field {
+    @apply w-full bg-dark-200 border border-dark-100 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors duration-150;
+  }
+
+  .btn-primary {
+    @apply w-full bg-brand-600 hover:bg-brand-500 active:bg-brand-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .avatar {
+    @apply flex items-center justify-center rounded-full font-semibold text-white flex-shrink-0 uppercase select-none;
+  }
+}
+
+/* Typing dots animation */
+.typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #94a3b8;
+  animation: typingBounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
